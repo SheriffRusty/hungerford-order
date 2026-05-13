@@ -2,333 +2,406 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Hungerford Gourmet — Tonight's Order</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f2f2; padding-bottom: 90px; }
-  header { background: #c0392b; color: white; text-align: center; padding: 14px 16px 10px; }
-  header h1 { font-size: 1.15em; font-weight: 700; letter-spacing: 0.03em; }
-  header p { font-size: 0.8em; margin-top: 4px; opacity: 0.85; }
-  .info { background: #fffbe6; border-bottom: 1px solid #e8d84a; text-align: center; font-size: 0.78em; color: #555; padding: 7px 12px; }
-  .section { background: #c0392b; color: white; font-weight: 700; font-size: 0.8em; padding: 7px 14px; letter-spacing: 0.08em; margin-top: 6px; }
-  .item { display: flex; align-items: center; background: white; border-bottom: 1px solid #efefef; padding: 9px 14px; cursor: pointer; user-select: none; }
-  .item.checked { background: #fef6f6; }
-  .tick { width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 4px; margin-right: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; }
-  .item.checked .tick { background: #c0392b; border-color: #c0392b; }
-  .item.checked .tick::after { content: '✓'; }
-  .item-body { flex: 1; min-width: 0; }
-  .item-name { font-size: 0.88em; color: #1a1a1a; line-height: 1.3; }
-  .item-no { font-size: 0.72em; color: #aaa; margin-top: 1px; }
-  .item-price { font-size: 0.88em; color: #c0392b; font-weight: 600; margin-left: 8px; flex-shrink: 0; }
-  .send-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 2px solid #e0e0e0; padding: 10px 12px; display: flex; gap: 8px; z-index: 100; }
-  .btn { flex: 1; background: #25D366; color: white; border: none; border-radius: 8px; padding: 11px 4px; font-size: 0.78em; font-weight: 700; cursor: pointer; line-height: 1.3; text-decoration: none; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .btn:active { background: #1da851; }
-  .warning { color: #c0392b; font-size: 0.82em; text-align: center; padding: 10px; display: none; background: #fef6f6; border-top: 1px solid #f5c6c6; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;background:#f5f5f5;color:#222}
+#topbar{position:sticky;top:0;z-index:100}
+#hdr{background:#c0392b;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+#hdr h1{font-size:16px;font-weight:700}
+#status{font-size:11px;opacity:.75}
+#tots{background:#2c3e50;color:#fff;padding:8px 14px;display:flex;justify-content:space-around}
+.tg{display:flex;flex-direction:column;align-items:center}
+.tl{font-size:10px;opacity:.65;text-transform:uppercase;letter-spacing:.5px}
+.ta{font-size:15px;font-weight:700}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:420px;border-collapse:collapse;background:#fff}
+th{background:#ecf0f1;padding:7px 4px;font-size:11px;font-weight:700;text-align:center;border-bottom:2px solid #bdc3c7;white-space:nowrap}
+th.dc{text-align:left;padding-left:8px}
+.sec td{background:#34495e;color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px}
+.item:nth-child(even){background:#fafafa}
+td{padding:3px 4px;border-bottom:1px solid #ecf0f1;vertical-align:middle}
+.nc{text-align:center;color:#aaa;font-size:11px;width:28px;min-width:28px}
+.dc{padding-left:8px;line-height:1.3}
+.pc{text-align:right;color:#777;font-size:12px;white-space:nowrap;width:40px;min-width:40px}
+.xc{text-align:center;width:44px;min-width:44px;padding:2px}
+.rc{text-align:right;font-size:11px;font-weight:600;color:#c0392b;white-space:nowrap;width:42px;min-width:42px;padding-right:4px}
+.tick{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;border:2px solid;cursor:pointer;font-size:20px;line-height:1;transition:background .12s,color .12s;user-select:none;-webkit-user-select:none;background:#fff;color:transparent}
+.tick:active{opacity:.7}
+.tick[data-g="b"]{border-color:#27ae60}
+.tick[data-g="b"].on{background:#27ae60;color:#fff}
+.tick[data-g="w"]{border-color:#2980b9}
+.tick[data-g="w"].on{background:#2980b9;color:#fff}
+.tick[data-g="a"]{border-color:#e67e22}
+.tick[data-g="a"].on{background:#e67e22;color:#fff}
+tfoot td{background:#2c3e50;color:#fff;font-weight:700;padding:10px 4px;text-align:center;font-size:13px}
+tfoot td.lbl{text-align:left;padding-left:8px}
+#foot{padding:12px 16px;font-size:11px;color:#aaa;text-align:center}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>Hungerford Gourmet Oriental</h1>
-  <p>Tick your dishes &bull; tap your button to send the order to Steve</p>
-</header>
-<div class="info">01488 686898 &nbsp;&bull;&nbsp; Orders up to 10:30pm &nbsp;&bull;&nbsp; £15 min for card</div>
-
-<div id="menu"></div>
-<div class="warning" id="warning">Please tick at least one dish first!</div>
-
-<div class="send-bar">
-  <a class="btn" id="btn-browns"  href="#" data-group="Brown's">Send<br>Brown's</a>
-  <a class="btn" id="btn-watsons" href="#" data-group="Watson's">Send<br>Watson's</a>
-  <a class="btn" id="btn-aznick"  href="#" data-group="Az &amp; Nick">Send<br>Az &amp; Nick</a>
+<div id="topbar">
+  <div id="hdr">
+    <h1>Hungerford Gourmet</h1>
+    <div id="status">Connecting&#8230;</div>
+  </div>
+  <div id="tots">
+    <div class="tg"><span class="tl">Brown&#8217;s</span><span class="ta" id="tb">&#163;0.00</span></div>
+    <div class="tg"><span class="tl">Watson&#8217;s</span><span class="ta" id="tw">&#163;0.00</span></div>
+    <div class="tg"><span class="tl">Az &amp; Nick</span><span class="ta" id="ta">&#163;0.00</span></div>
+    <div class="tg"><span class="tl">Total</span><span class="ta" id="tt">&#163;0.00</span></div>
+  </div>
 </div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+  <th class="nc">#</th>
+  <th class="dc">Dish</th>
+  <th class="pc">&#163;</th>
+  <th class="xc" style="color:#27ae60">B</th>
+  <th class="xc" style="color:#2980b9">W</th>
+  <th class="xc" style="color:#e67e22">A</th>
+  <th class="rc">&#163;tot</th>
+</tr>
+</thead>
+<tbody id="body"></tbody>
+<tfoot>
+<tr>
+  <td colspan="3" class="lbl">TOTAL</td>
+  <td id="fb">&#163;0.00</td>
+  <td id="fw">&#163;0.00</td>
+  <td id="fa">&#163;0.00</td>
+  <td id="ft">&#163;0.00</td>
+</tr>
+</tfoot>
+</table>
+</div>
+<div id="foot">Tap a circle to order &#8212; changes sync live to everyone&#8217;s screen<br>
+<span style="color:#27ae60">&#9632;</span> Brown&#8217;s &nbsp;
+<span style="color:#2980b9">&#9632;</span> Watson&#8217;s &nbsp;
+<span style="color:#e67e22">&#9632;</span> Az &amp; Nick</div>
 
 <script>
-var menuData = [
+var DB='https://wong-wednesday-default-rtdb.europe-west1.firebasedatabase.app';
+var state={};
+
+var menu=[
   {s:'APPETIZERS'},
-  {n:'1',  d:'Crispy Pancake Roll (Each)',                                                    p:'3.50'},
-  {n:'2',  d:'Crispy Vegetarian Roll (5)',                                                    p:'3.50'},
-  {n:'3',  d:'Prawn On Toast With Sesame Seeds (1 Slice)',                                    p:'6.20'},
-  {n:'4',  d:'Crispy Seaweed',                                                                p:'5.20'},
-  {n:'5',  d:'Prawn Crackers',                                                                p:'3.00'},
-  {n:'6',  d:'Crispy Won Ton With Sweet and Sour Sauce',                                      p:'6.50'},
-  {n:'7',  d:'Barbecued Spare Ribs With Sauce',                                               p:'8.20'},
-  {n:'8',  d:'Spare Ribs In Capital Sauce',                                                   p:'8.20'},
-  {n:'9',  d:'Spare Ribs With Salt and Chili (Dry)',                                          p:'8.20'},
-  {n:'10', d:'Special Crispy Platter (Veg Rolls / Spare Ribs / Seaweed / Prawn Toast)',        p:'11.00'},
-  {n:'11a',d:'Crispy Aromatic Duck - Quarter (Pancakes / Spring Onion / Cucumber / Hoi Sin)', p:'12.00'},
-  {n:'11b',d:'Crispy Aromatic Duck - Half (Pancakes / Spring Onion / Cucumber / Hoi Sin)',    p:'22.00'},
-  {n:'12', d:'Spicy Salt and Chilli Chicken Wings',                                           p:'7.50'},
-  {n:'13', d:'Crispy Chicken Wings (Deep Fried / Sweet Chilli Sauce)',                        p:'7.50'},
-  {n:'14', d:'Crispy Lamb With Pancakes (Spring Onion / Cucumber / Hoi Sin)',                 p:'12.50'},
-  {n:'15', d:'Chicken Satay On Skewers (Spicy Peanut Satay Sauce)',                           p:'7.30'},
-  {n:'16', d:'Chicken In Breadcrumb',                                                         p:'8.20'},
-  {n:'17', d:'Butterfly King Prawn (6)',                                                      p:'7.20'},
-
+  {n:'1',d:'Crispy Pancake Roll (Each)',p:'3.50'},
+  {n:'2',d:'Crispy Vegetarian Roll (5)',p:'3.50'},
+  {n:'3',d:'Prawn On Toast With Sesame Seeds (1 Slice)',p:'6.20'},
+  {n:'4',d:'Crispy Seaweed',p:'5.20'},
+  {n:'5',d:'Prawn Crackers',p:'3.00'},
+  {n:'6',d:'Crispy Won Ton With Sweet and Sour Sauce',p:'6.50'},
+  {n:'7',d:'Barbecued Spare Ribs With Sauce',p:'8.20'},
+  {n:'8',d:'Spare Ribs In Capital Sauce',p:'8.20'},
+  {n:'9',d:'Spare Ribs With Salt and Chilli (Dry)',p:'8.20'},
+  {n:'10',d:'Special Crispy Platter (Veg Rolls / Spare Ribs / Seaweed / Prawn Toast)',p:'11.00'},
+  {n:'11a',d:'Crispy Aromatic Duck - Quarter',p:'12.00'},
+  {n:'11b',d:'Crispy Aromatic Duck - Half',p:'22.00'},
+  {n:'12',d:'Spicy Salt and Chilli Chicken Wings',p:'7.50'},
+  {n:'13',d:'Crispy Chicken Wings',p:'7.50'},
+  {n:'14',d:'Crispy Lamb With Pancakes',p:'12.50'},
+  {n:'15',d:'Chicken Satay On Skewers',p:'7.30'},
+  {n:'16',d:'Chicken In Breadcrumb',p:'8.20'},
+  {n:'17',d:'Butterfly King Prawn (6)',p:'7.20'},
   {s:'SOUP'},
-  {n:'21', d:'Won Ton Soup',               p:'5.70'},
-  {n:'22', d:'Crab Meat and Sweetcorn Soup', p:'5.70'},
-  {n:'23', d:'Chicken and Sweetcorn Soup', p:'4.80'},
-  {n:'24', d:'Chicken and Noodle Soup',    p:'4.80'},
-  {n:'25', d:'Chicken and Mushroom Soup',  p:'4.80'},
-  {n:'26', d:'Hot and Sour Soup',          p:'5.70'},
-
-  {s:'SWEET AND SOUR'},
-  {n:'30', d:'Sweet and Sour King Prawn Balls',              p:'8.50'},
-  {n:'31', d:'Sweet and Sour Chicken Balls',                 p:'7.50'},
-  {n:'32', d:'Sweet and Sour Pork Balls',                    p:'7.50'},
-  {n:'33', d:'Sweet and Sour King Prawns (Hong Kong Style)', p:'9.00'},
-  {n:'34', d:'Sweet and Sour Chicken (Hong Kong Style)',     p:'8.00'},
-  {n:'35', d:'Sweet and Sour Pork (Hong Kong Style)',        p:'8.00'},
-  {n:'36', d:'Sweet and Sour Vegetables (Hong Kong Style)',  p:'7.80'},
-  {n:'37', d:'Sweet and Sour Spare Ribs (Hong Kong Style)',  p:'8.20'},
-
-  {s:'CURRY DISHES (price without rice — add 1.80 boiled / 2.10 fried)'},
-  {n:'42', d:'Special Curry',     p:'8.90'},
-  {n:'43', d:'King Prawn Curry',  p:'8.90'},
-  {n:'44', d:'Beef Curry',        p:'7.60'},
-  {n:'45', d:'Chicken Curry',     p:'7.60'},
-  {n:'46', d:'Sliced Duck Curry', p:'9.90'},
-  {n:'47', d:'Roast Pork Curry',  p:'7.60'},
-  {n:'48', d:'Shrimp Curry',      p:'7.60'},
-  {n:'49', d:'Mushroom Curry',    p:'7.00'},
-  {n:'50', d:'Vegetable Curry',   p:'7.00'},
-  {n:'51', d:'Lamb Curry',        p:'9.90'},
-
+  {n:'21',d:'Won Ton Soup',p:'5.70'},
+  {n:'22',d:'Crab Meat and Sweetcorn Soup',p:'5.70'},
+  {n:'23',d:'Chicken and Sweetcorn Soup',p:'4.80'},
+  {n:'24',d:'Chicken and Noodle Soup',p:'4.80'},
+  {n:'25',d:'Chicken and Mushroom Soup',p:'4.80'},
+  {n:'26',d:'Hot and Sour Soup',p:'5.70'},
+  {s:'SWEET AND SOUR DISHES'},
+  {n:'30',d:'Sweet and Sour King Prawn Balls',p:'8.50'},
+  {n:'31',d:'Sweet and Sour Chicken Balls',p:'7.50'},
+  {n:'32',d:'Sweet and Sour Pork Balls',p:'7.50'},
+  {n:'33',d:'Sweet and Sour King Prawns (Hong Kong Style)',p:'9.00'},
+  {n:'34',d:'Sweet and Sour Chicken (Hong Kong Style)',p:'8.00'},
+  {n:'35',d:'Sweet and Sour Pork (Hong Kong Style)',p:'8.00'},
+  {n:'36',d:'Sweet and Sour Vegetables (Hong Kong Style)',p:'7.80'},
+  {n:'37',d:'Sweet and Sour Spare Ribs (Hong Kong Style)',p:'8.20'},
+  {s:'CURRY DISHES - price without rice, add 1.80 boiled or 2.10 fried'},
+  {n:'42',d:'Special Curry',p:'8.90'},
+  {n:'43',d:'King Prawn Curry',p:'8.90'},
+  {n:'44',d:'Beef Curry',p:'7.60'},
+  {n:'45',d:'Chicken Curry',p:'7.60'},
+  {n:'46',d:'Sliced Duck Curry',p:'9.90'},
+  {n:'47',d:'Roast Pork Curry',p:'7.60'},
+  {n:'48',d:'Shrimp Curry',p:'7.60'},
+  {n:'49',d:'Mushroom Curry',p:'7.00'},
+  {n:'50',d:'Vegetable Curry',p:'7.00'},
+  {n:'51',d:'Lamb Curry',p:'9.90'},
   {s:'RICE DISHES'},
-  {n:'59', d:'House Special Rice (Mixed Meat and Vegetables In Gravy)', p:'9.00'},
-  {n:'60', d:'Special Fried Rice (Dry)',       p:'7.30'},
-  {n:'61', d:'Chicken Fried Rice',             p:'7.30'},
-  {n:'62', d:'Shrimp Fried Rice',              p:'7.30'},
-  {n:'63', d:'King Prawn Fried Rice',          p:'9.10'},
-  {n:'64', d:'Roast Pork Fried Rice',          p:'7.30'},
-  {n:'65', d:'Roast Duck Fried Rice',          p:'10.00'},
-  {n:'66', d:'Mushroom Fried Rice',            p:'6.80'},
-  {n:'67', d:'Singapore Style Fried Rice',     p:'8.10'},
-  {n:'68', d:'Egg Fried Rice',                 p:'4.60'},
-  {n:'69', d:'Boiled Rice',                    p:'4.30'},
-  {n:'70', d:'Mixed Vegetable Fried Rice',     p:'6.80'},
-  {n:'71', d:'Pineapple Fried Rice',           p:'6.80'},
-
+  {n:'59',d:'House Special Rice (Mixed Meat and Vegetables In Gravy)',p:'9.00'},
+  {n:'60',d:'Special Fried Rice (Dry)',p:'7.30'},
+  {n:'61',d:'Chicken Fried Rice',p:'7.30'},
+  {n:'62',d:'Shrimp Fried Rice',p:'7.30'},
+  {n:'63',d:'King Prawn Fried Rice',p:'9.10'},
+  {n:'64',d:'Roast Pork Fried Rice',p:'7.30'},
+  {n:'65',d:'Roast Duck Fried Rice',p:'10.00'},
+  {n:'66',d:'Mushroom Fried Rice',p:'6.80'},
+  {n:'67',d:'Singapore Style Fried Rice',p:'8.10'},
+  {n:'68',d:'Egg Fried Rice',p:'4.60'},
+  {n:'69',d:'Boiled Rice',p:'4.30'},
+  {n:'70',d:'Mixed Vegetable Fried Rice',p:'6.80'},
+  {n:'71',d:'Pineapple Fried Rice',p:'6.80'},
   {s:'CHOW MEIN (SOFT NOODLES)'},
-  {n:'80', d:'House Special Chow Mein (Mixed Meat and Veg In Gravy)', p:'9.00'},
-  {n:'81', d:'Special Chow Mein (Dry)',        p:'8.30'},
-  {n:'82', d:'Chicken Chow Mein',              p:'7.30'},
-  {n:'83', d:'Beef Chow Mein',                 p:'7.30'},
-  {n:'84', d:'Shrimp Chow Mein',               p:'7.30'},
-  {n:'85', d:'Roast Pork Chow Mein',           p:'7.30'},
-  {n:'86', d:'Vegetable Chow Mein',            p:'8.30'},
-  {n:'87', d:'Mushroom Chow Mein',             p:'7.30'},
-  {n:'88', d:'Singapore Chow Mein',            p:'8.30'},
-  {n:'89', d:'Roast Duck Chow Mein',           p:'9.90'},
-  {n:'90', d:'Singapore Rice Noodles',         p:'8.30'},
-  {n:'91', d:'Plain Chow Mein',                p:'5.80'},
-  {n:'92', d:'King Prawn Chow Mein',           p:'9.20'},
-
+  {n:'80',d:'House Special Chow Mein (Mixed Meat and Veg In Gravy)',p:'9.00'},
+  {n:'81',d:'Special Chow Mein (Dry)',p:'8.30'},
+  {n:'82',d:'Chicken Chow Mein',p:'7.30'},
+  {n:'83',d:'Beef Chow Mein',p:'7.30'},
+  {n:'84',d:'Shrimp Chow Mein',p:'7.30'},
+  {n:'85',d:'Roast Pork Chow Mein',p:'7.30'},
+  {n:'86',d:'Vegetable Chow Mein',p:'8.30'},
+  {n:'87',d:'Mushroom Chow Mein',p:'7.30'},
+  {n:'88',d:'Singapore Chow Mein',p:'8.30'},
+  {n:'89',d:'Roast Duck Chow Mein',p:'9.90'},
+  {n:'90',d:'Singapore Rice Noodles',p:'8.30'},
+  {n:'91',d:'Plain Chow Mein',p:'5.80'},
+  {n:'92',d:'King Prawn Chow Mein',p:'9.20'},
   {s:'CHICKEN DISHES'},
-  {n:'101',d:'Chicken With Mushroom',                                        p:'8.10'},
-  {n:'102',d:'Chicken With Green Pepper In Black Bean Sauce',                p:'8.30'},
-  {n:'103',d:'Chicken With Pineapple',                                       p:'8.10'},
-  {n:'104',d:'Chicken With Tomato',                                          p:'8.10'},
-  {n:'105',d:'Crispy Chilli Chicken',                                        p:'8.30'},
-  {n:'106',d:'Chicken With Bamboo Shoots and Water Chestnuts',               p:'8.10'},
-  {n:'107',d:'Chicken With Cashew Nuts',                                     p:'8.70'},
-  {n:'108',d:'Roast Chicken Chinese Style',                                  p:'8.10'},
-  {n:'109',d:'Sliced Chicken In Lemon Sauce',                                p:'8.30'},
-  {n:'110',d:'Chicken With Ginger and Spring Onion',                         p:'8.30'},
-  {n:'111',d:'Chicken In Satay Sauce',                                       p:'8.30'},
-  {n:'112',d:'Kung Po Chilli Chicken',                                       p:'8.30'},
-  {n:'113',d:'Chicken With Cashew Nuts In Yellow Bean Sauce',                p:'9.20'},
-  {n:'114',d:'Chicken With Mixed Vegetables',                                p:'8.10'},
-  {n:'115',d:'Chicken Hunan Style (Bamboo Shoots and Green Pepper In Spicy Hot Bean Sauce)', p:'8.30'},
-  {n:'116',d:'Chicken Peking Style (Ginger / Spring Onion / Garlic / Tangy Vinegar and Ginger Wine)', p:'8.30'},
-  {n:'117',d:'Chicken In Black Peppercorn Sauce',                            p:'8.30'},
-  {n:'118',d:'Spicy Salt and Chilli Chicken (Dry)',                          p:'8.30'},
-  {n:'119',d:'Chicken In Mandarin Sauce (Pineapple / Tomato Fruity Sauce)',  p:'8.30'},
-  {n:'120',d:'Chicken In Oyster Sauce',                                      p:'8.30'},
-
+  {n:'101',d:'Chicken With Mushroom',p:'8.10'},
+  {n:'102',d:'Chicken With Green Pepper In Black Bean Sauce',p:'8.30'},
+  {n:'103',d:'Chicken With Pineapple',p:'8.10'},
+  {n:'104',d:'Chicken With Tomato',p:'8.10'},
+  {n:'105',d:'Crispy Chilli Chicken',p:'8.30'},
+  {n:'106',d:'Chicken With Bamboo Shoots and Water Chestnuts',p:'8.10'},
+  {n:'107',d:'Chicken With Cashew Nuts',p:'8.70'},
+  {n:'108',d:'Roast Chicken Chinese Style',p:'8.10'},
+  {n:'109',d:'Sliced Chicken In Lemon Sauce',p:'8.30'},
+  {n:'110',d:'Chicken With Ginger and Spring Onion',p:'8.30'},
+  {n:'111',d:'Chicken In Satay Sauce',p:'8.30'},
+  {n:'112',d:'Kung Po Chilli Chicken',p:'8.30'},
+  {n:'113',d:'Chicken With Cashew Nuts In Yellow Bean Sauce',p:'9.20'},
+  {n:'114',d:'Chicken With Mixed Vegetables',p:'8.10'},
+  {n:'115',d:'Chicken Hunan Style',p:'8.30'},
+  {n:'116',d:'Chicken Peking Style',p:'8.30'},
+  {n:'117',d:'Chicken In Black Peppercorn Sauce',p:'8.30'},
+  {n:'118',d:'Spicy Salt and Chilli Chicken (Dry)',p:'8.30'},
+  {n:'119',d:'Chicken In Mandarin Sauce',p:'8.30'},
+  {n:'120',d:'Chicken In Oyster Sauce',p:'8.30'},
   {s:'BEEF DISHES'},
-  {n:'130',d:'Beef With Ginger and Spring Onion',                            p:'8.30'},
-  {n:'131',d:'Beef With Mushroom',                                           p:'8.30'},
-  {n:'132',d:'Beef With Green Pepper In Black Bean Sauce',                   p:'8.30'},
-  {n:'133',d:'Beef With Mixed Vegetables',                                   p:'8.10'},
-  {n:'134',d:'Beef With Tomato',                                             p:'8.10'},
-  {n:'135',d:'Beef With Bamboo Shoots and Water Chestnuts',                  p:'8.10'},
-  {n:'136',d:'Beef With Cashew Nuts',                                        p:'8.80'},
-  {n:'137',d:'Beef With Pineapple',                                          p:'8.10'},
-  {n:'138',d:'Beef With Onion',                                              p:'8.10'},
-  {n:'139',d:'Beef In Satay Sauce',                                          p:'8.30'},
-  {n:'140',d:'Crispy Chilli Beef',                                           p:'8.30'},
-  {n:'141',d:'Beef Hunan Style (Bamboo Shoots and Green Pepper In Spicy Hot Bean Sauce)', p:'8.30'},
-  {n:'142',d:'Beef Peking Style (Ginger / Spring Onion / Garlic / Tangy Vinegar and Wine Sauce)', p:'8.30'},
-  {n:'143',d:'Beef In Mandarin Sauce (Pineapple / Tomato Fruity Sauce)',     p:'8.30'},
-  {n:'144',d:'Beef In Black Peppercorn Sauce',                               p:'8.30'},
-
+  {n:'130',d:'Beef With Ginger and Spring Onion',p:'8.30'},
+  {n:'131',d:'Beef With Mushroom',p:'8.30'},
+  {n:'132',d:'Beef With Green Pepper In Black Bean Sauce',p:'8.30'},
+  {n:'133',d:'Beef With Mixed Vegetables',p:'8.10'},
+  {n:'134',d:'Beef With Tomato',p:'8.10'},
+  {n:'135',d:'Beef With Bamboo Shoots and Water Chestnuts',p:'8.10'},
+  {n:'136',d:'Beef With Cashew Nuts',p:'8.80'},
+  {n:'137',d:'Beef With Pineapple',p:'8.10'},
+  {n:'138',d:'Beef With Onion',p:'8.10'},
+  {n:'139',d:'Beef In Satay Sauce',p:'8.30'},
+  {n:'140',d:'Crispy Chilli Beef',p:'8.30'},
+  {n:'141',d:'Beef Hunan Style',p:'8.30'},
+  {n:'142',d:'Beef Peking Style',p:'8.30'},
+  {n:'143',d:'Beef In Mandarin Sauce',p:'8.30'},
+  {n:'144',d:'Beef In Black Peppercorn Sauce',p:'8.30'},
   {s:'LAMB AND PORK DISHES'},
-  {n:'151',d:'Crispy Lamb With Hot Garlic Soy Sauce',                        p:'11.80'},
-  {n:'152',d:'Slice Pork With Plum Sauce',                                   p:'8.30'},
-  {n:'153',d:'Roast Pork Chinese Style',                                     p:'8.30'},
-  {n:'154',d:'Roast Pork and Chicken Chinese Style',                         p:'8.80'},
-  {n:'155',d:'Roast Pork With Mushroom',                                     p:'8.30'},
-  {n:'156',d:'Roast Pork With Green Pepper In Black Bean Sauce',             p:'8.30'},
-  {n:'157',d:'Roast Pork With Vegetables',                                   p:'8.30'},
-  {n:'158',d:'Roast Pork With Bamboo Shoots and Water Chestnuts',            p:'8.30'},
-  {n:'159',d:'Spicy Salt and Chilli Pork (Dry)',                             p:'8.30'},
-
+  {n:'151',d:'Crispy Lamb With Hot Garlic Soy Sauce',p:'11.80'},
+  {n:'152',d:'Sliced Pork With Plum Sauce',p:'8.30'},
+  {n:'153',d:'Roast Pork Chinese Style',p:'8.30'},
+  {n:'154',d:'Roast Pork and Chicken Chinese Style',p:'8.80'},
+  {n:'155',d:'Roast Pork With Mushroom',p:'8.30'},
+  {n:'156',d:'Roast Pork With Green Pepper In Black Bean Sauce',p:'8.30'},
+  {n:'157',d:'Roast Pork With Vegetables',p:'8.30'},
+  {n:'158',d:'Roast Pork With Bamboo Shoots and Water Chestnuts',p:'8.30'},
+  {n:'159',d:'Spicy Salt and Chilli Pork (Dry)',p:'8.30'},
   {s:'DUCKLING DISHES'},
-  {n:'168',d:'Roast Duck Chinese Style',                                     p:'10.00'},
-  {n:'169',d:'Sliced Duck With Green Pepper In Black Bean Sauce',            p:'10.00'},
-  {n:'170',d:'Slice Duck With Plum Sauce',                                   p:'10.00'},
-  {n:'171',d:'Sliced Duck With Mushroom',                                    p:'10.00'},
-  {n:'172',d:'Sliced Duck With Pineapple',                                   p:'10.00'},
-  {n:'173',d:'Sliced Duck With Cashew Nuts',                                 p:'10.20'},
-  {n:'174',d:'Sliced Duck With Bamboo Shoots and Water Chestnuts',           p:'10.00'},
-  {n:'175',d:'Sliced Duck With Oyster Sauce',                                p:'10.00'},
-  {n:'176',d:'Crispy Peking Duck (Pancakes / Spring Onion / Cucumber / Hoi Sin)', p:'11.10'},
-
+  {n:'168',d:'Roast Duck Chinese Style',p:'10.00'},
+  {n:'169',d:'Sliced Duck With Green Pepper In Black Bean Sauce',p:'10.00'},
+  {n:'170',d:'Sliced Duck With Plum Sauce',p:'10.00'},
+  {n:'171',d:'Sliced Duck With Mushroom',p:'10.00'},
+  {n:'172',d:'Sliced Duck With Pineapple',p:'10.00'},
+  {n:'173',d:'Sliced Duck With Cashew Nuts',p:'10.20'},
+  {n:'174',d:'Sliced Duck With Bamboo Shoots and Water Chestnuts',p:'10.00'},
+  {n:'175',d:'Sliced Duck With Oyster Sauce',p:'10.00'},
+  {n:'176',d:'Crispy Peking Duck (Pancakes / Spring Onion / Cucumber / Hoi Sin Sauce)',p:'11.10'},
   {s:'KING PRAWN DISHES'},
-  {n:'190',d:'King Prawns With Ginger and Spring Onion',                     p:'9.00'},
-  {n:'191',d:'King Prawns With Green Pepper In Black Bean Sauce',            p:'9.00'},
-  {n:'192',d:'King Prawns With Cashew Nuts',                                 p:'9.50'},
-  {n:'193',d:'King Prawns With Mushroom',                                    p:'9.00'},
-  {n:'194',d:'Kung Po King Prawns',                                          p:'9.00'},
-  {n:'195',d:'King Prawns In Satay Sauce',                                   p:'9.00'},
-  {n:'196',d:'King Prawns With Mixed Vegetables',                            p:'9.00'},
-  {n:'197',d:'Crispy Chilli King Prawns',                                    p:'9.00'},
-  {n:'198',d:'King Prawns With Bamboo Shoots and Water Chestnuts',           p:'9.00'},
-  {n:'199',d:'King Prawns Hunan Style',                                      p:'9.00'},
-  {n:'200',d:'King Prawns Peking Style',                                     p:'9.00'},
-  {n:'201',d:'King Prawns In Black Bean Sauce',                              p:'9.00'},
-  {n:'202',d:'Spicy Salt and Chilli King Prawns (Dry)',                      p:'9.00'},
-
+  {n:'190',d:'King Prawns With Ginger and Spring Onion',p:'9.00'},
+  {n:'191',d:'King Prawns With Green Pepper In Black Bean Sauce',p:'9.00'},
+  {n:'192',d:'King Prawns With Cashew Nuts',p:'9.50'},
+  {n:'193',d:'King Prawns With Mushroom',p:'9.00'},
+  {n:'194',d:'Kung Po King Prawns',p:'9.00'},
+  {n:'195',d:'King Prawns In Satay Sauce',p:'9.00'},
+  {n:'196',d:'King Prawns With Mixed Vegetables',p:'9.00'},
+  {n:'197',d:'Crispy Chilli King Prawns',p:'9.00'},
+  {n:'198',d:'King Prawns With Bamboo Shoots and Water Chestnuts',p:'9.00'},
+  {n:'199',d:'King Prawns Hunan Style',p:'9.00'},
+  {n:'200',d:'King Prawns Peking Style',p:'9.00'},
+  {n:'201',d:'King Prawns In Black Bean Sauce',p:'9.00'},
+  {n:'202',d:'Spicy Salt and Chilli King Prawns (Dry)',p:'9.00'},
   {s:'CHOP SUEY (BEANSPROUTS)'},
-  {n:'210',d:'Special Chop Suey (Mixed Meat)', p:'8.20'},
-  {n:'211',d:'King Prawns Chop Suey',          p:'8.20'},
-  {n:'212',d:'Chicken Chop Suey',              p:'7.20'},
-  {n:'213',d:'Beef Chop Suey',                 p:'7.20'},
-  {n:'214',d:'Shrimp Chop Suey',               p:'7.20'},
-  {n:'215',d:'Roast Pork Chop Suey',           p:'7.20'},
-  {n:'216',d:'Sliced Duck Chop Suey',          p:'8.20'},
-
+  {n:'210',d:'Special Chop Suey (Mixed Meat)',p:'8.20'},
+  {n:'211',d:'King Prawns Chop Suey',p:'8.20'},
+  {n:'212',d:'Chicken Chop Suey',p:'7.20'},
+  {n:'213',d:'Beef Chop Suey',p:'7.20'},
+  {n:'214',d:'Shrimp Chop Suey',p:'7.20'},
+  {n:'215',d:'Roast Pork Chop Suey',p:'7.20'},
+  {n:'216',d:'Sliced Duck Chop Suey',p:'8.20'},
   {s:'OMELETTE DISHES (with chips)'},
-  {n:'222',d:'King Prawn Omelette',   p:'8.80'},
-  {n:'223',d:'Special Omelette',      p:'8.80'},
-  {n:'224',d:'Shrimp Omelette',       p:'8.00'},
-  {n:'225',d:'Chicken Omelette',      p:'7.90'},
-  {n:'226',d:'Roast Pork Omelette',   p:'7.90'},
-  {n:'227',d:'Mushroom Omelette',     p:'7.60'},
-  {n:'228',d:'Plain Omelette',        p:'7.60'},
+  {n:'222',d:'King Prawn Omelette',p:'8.80'},
+  {n:'223',d:'Special Omelette',p:'8.80'},
+  {n:'224',d:'Shrimp Omelette',p:'8.00'},
+  {n:'225',d:'Chicken Omelette',p:'7.90'},
+  {n:'226',d:'Roast Pork Omelette',p:'7.90'},
+  {n:'227',d:'Mushroom Omelette',p:'7.60'},
+  {n:'228',d:'Plain Omelette',p:'7.60'},
   {n:'229',d:'Roast Chicken and Chips',p:'7.60'},
-
   {s:'FOO YUNG (EGG AND BEANSPROUTS)'},
-  {n:'245',d:'Special Foo Yung',      p:'8.10'},
-  {n:'246',d:'King Prawn Foo Yung',   p:'8.60'},
-  {n:'247',d:'Chicken Foo Yung',      p:'7.70'},
-  {n:'248',d:'Shrimp Foo Yung',       p:'7.70'},
-  {n:'249',d:'Mushroom Foo Yung',     p:'7.20'},
-
+  {n:'245',d:'Special Foo Yung',p:'8.10'},
+  {n:'246',d:'King Prawn Foo Yung',p:'8.60'},
+  {n:'247',d:'Chicken Foo Yung',p:'7.70'},
+  {n:'248',d:'Shrimp Foo Yung',p:'7.70'},
+  {n:'249',d:'Mushroom Foo Yung',p:'7.20'},
   {s:'VEGETABLE DISHES'},
-  {n:'255',d:'Monks Vegetables (Chinese Veg and Bean Curd In Soy Sauce)',                          p:'6.80'},
-  {n:'256',d:'Four Vegetable Ensemble (Chinese Leaves / Straw Mushrooms / Babycorn / Mangetout)',  p:'6.80'},
-  {n:'257',d:'Fried Mushrooms',                       p:'5.80'},
-  {n:'258',d:'Fried Vegetables',                      p:'5.80'},
+  {n:'255',d:'Monks Vegetables (Chinese Veg and Bean Curd In Soy Sauce)',p:'6.80'},
+  {n:'256',d:'Four Vegetable Ensemble (Chinese Leaves / Straw Mushrooms / Babycorn / Mangetout)',p:'6.80'},
+  {n:'257',d:'Fried Mushrooms',p:'5.80'},
+  {n:'258',d:'Fried Vegetables',p:'5.80'},
   {n:'259',d:'Fried Bamboo Shoots and Water Chestnuts',p:'6.70'},
-  {n:'260',d:'Mushroom Chop Suey',                    p:'6.70'},
-  {n:'261',d:'Vegetables In Black Bean Sauce',        p:'6.70'},
-  {n:'262',d:'Vegetables In Satay Sauce',             p:'6.70'},
-  {n:'263',d:'Vegetables In Kung Po Sauce',           p:'6.70'},
-  {n:'264',d:'Vegetarian Singapore Rice Noodles',     p:'8.00'},
-  {n:'265',d:'Spicy Salt and Chilli Tofu (Dry)',      p:'7.70'},
-  {n:'266',d:'Tofu Hunan Style',                      p:'7.70'},
-  {n:'267',d:'Fried Beansprouts',                     p:'5.80'},
-
+  {n:'260',d:'Mushroom Chop Suey',p:'6.70'},
+  {n:'261',d:'Vegetables In Black Bean Sauce',p:'6.70'},
+  {n:'262',d:'Vegetables In Satay Sauce',p:'6.70'},
+  {n:'263',d:'Vegetables In Kung Po Sauce',p:'6.70'},
+  {n:'264',d:'Vegetarian Singapore Rice Noodles',p:'8.00'},
+  {n:'265',d:'Spicy Salt and Chilli Tofu (Dry)',p:'7.70'},
+  {n:'266',d:'Tofu Hunan Style',p:'7.70'},
+  {n:'267',d:'Fried Beansprouts',p:'5.80'},
   {s:'EXTRAS'},
-  {n:'268',d:'Chips',                     p:'3.10'},
-  {n:'269',d:'Banana Fritter In Syrup',   p:'4.20'},
+  {n:'268',d:'Chips',p:'3.10'},
+  {n:'269',d:'Banana Fritter In Syrup',p:'4.20'},
   {n:'270',d:'Pineapple Fritter In Syrup',p:'4.20'},
-  {n:'271',d:'Barbecue Sauce',            p:'2.80'},
-  {n:'272',d:'Curry Sauce',               p:'2.80'},
-  {n:'273',d:'Sweet and Sour Sauce',      p:'2.80'},
-  {n:'274',d:'Satay Sauce',               p:'3.30'},
-  {n:'275',d:'Hoi Sin Sauce',             p:'3.30'},
-
+  {n:'271',d:'Barbecue Sauce',p:'2.80'},
+  {n:'272',d:'Curry Sauce',p:'2.80'},
+  {n:'273',d:'Sweet and Sour Sauce',p:'2.80'},
+  {n:'274',d:'Satay Sauce',p:'3.30'},
+  {n:'275',d:'Hoi Sin Sauce',p:'3.30'},
   {s:'SET DINNERS'},
-  {n:'A1',d:'Set For 1 — Beef With Mushrooms / S+S Chicken Balls (5) / Egg Fried Rice',                          p:'15.20'},
-  {n:'A2',d:'Set For 1 — Chicken Chop Suey / S+S Pork Balls (5) / Egg Fried Rice',                              p:'15.20'},
-  {n:'A3',d:'Set For 1 — Chicken Green Pepper Black Bean / S+S King Prawn Balls (5) / Egg Fried Rice',           p:'16.00'},
-  {n:'B1',d:'Set For 2 — Beef Mushrooms / Chicken Cashew / S+S Pork Balls / Prawn Crackers / Egg Fried Rice',    p:'28.00'},
-  {n:'B2',d:'Set For 2 — Pancake Rolls (2) / S+S Chicken Balls / Beef Chow Mein / Roast Pork / Prawn Crackers / Egg Fried Rice', p:'30.00'},
-  {n:'B3',d:'Set For 2 — BBQ Spare Ribs / King Prawn Mushroom / Crispy Chilli Beef / Prawn Crackers / Special Fried Rice', p:'32.00'},
-  {n:'C', d:'Set For 3 (Large) — Beef Mushrooms / S+S Pork HK / Chicken Cashew / King Prawn Black Bean / Prawn Crackers / Egg Fried Rice', p:'41.00'},
-  {n:'D', d:'Set For 4 (Large) — BBQ Spare Ribs (8) / Beef Black Bean / Chicken Cashew / King Prawn Mushroom / Crispy Chilli Beef / Prawn Crackers x2 / Egg Fried Rice x2', p:'52.00'}
+  {n:'A1',d:'Set For 1 - Beef With Mushrooms / S+S Chicken Balls (5) / Egg Fried Rice',p:'15.20'},
+  {n:'A2',d:'Set For 1 - Chicken Chop Suey / S+S Pork Balls (5) / Egg Fried Rice',p:'15.20'},
+  {n:'A3',d:'Set For 1 - Chicken Green Pepper Black Bean / S+S King Prawn Balls (5) / Egg Fried Rice',p:'16.00'},
+  {n:'B1',d:'Set For 2 - Beef With Mushrooms / Chicken Cashew Nuts / S+S Pork Balls / Prawn Crackers / Egg Fried Rice',p:'28.00'},
+  {n:'B2',d:'Set For 2 - Pancake Rolls (2) / S+S Chicken Balls / Beef Chow Mein / Roast Pork / Prawn Crackers / Egg Fried Rice',p:'30.00'},
+  {n:'B3',d:'Set For 2 - BBQ Spare Ribs / King Prawn With Mushrooms / Crispy Chilli Beef / Prawn Crackers / Special Fried Rice',p:'32.00'},
+  {n:'C',d:'Set For 3 - Beef Mushrooms / S+S Pork HK / Chicken Cashew / King Prawn Black Bean / Prawn Crackers / Egg Fried Rice',p:'41.00'},
+  {n:'D',d:'Set For 4 - BBQ Spare Ribs (8) / Beef Black Bean / Chicken Cashew / King Prawn Mushroom / Crispy Chilli Beef / Prawn Crackers (2) / Egg Fried Rice (2)',p:'52.00'},
 ];
 
-var currentSection = '';
-var container = document.getElementById('menu');
-
-menuData.forEach(function(row) {
-  if (row.s) {
-    currentSection = row.s;
-    var div = document.createElement('div');
-    div.className = 'section';
-    div.textContent = row.s;
-    container.appendChild(div);
-  } else {
-    var div = document.createElement('div');
-    div.className = 'item';
-    div.dataset.section = currentSection;
-    div.dataset.no = row.n;
-    div.dataset.name = row.d;
-    div.dataset.price = row.p;
-    div.innerHTML =
-      '<div class="tick"></div>' +
-      '<div class="item-body">' +
-        '<div class="item-name">' + row.d + '</div>' +
-        '<div class="item-no">No. ' + row.n + '</div>' +
-      '</div>' +
-      '<div class="item-price">£' + row.p + '</div>';
-    div.addEventListener('click', function() {
-      this.classList.toggle('checked');
-    });
-    container.appendChild(div);
-  }
-});
-
-function buildMessage(group) {
-  var checked = document.querySelectorAll('.item.checked');
-  if (checked.length === 0) { return null; }
-  var sections = {};
-  var order = [];
-  checked.forEach(function(item) {
-    var sec = item.dataset.section;
-    if (!sections[sec]) { sections[sec] = []; order.push(sec); }
-    sections[sec].push('[' + item.dataset.no + '] ' + item.dataset.name + ' - £' + item.dataset.price);
+(function(){
+  var tbody=document.getElementById('body');
+  menu.forEach(function(item){
+    var tr=document.createElement('tr');
+    if(item.s){
+      tr.className='sec';
+      var td=document.createElement('td');
+      td.colSpan=7;
+      td.textContent=item.s;
+      tr.appendChild(td);
+    } else {
+      tr.className='item';
+      tr.innerHTML=
+        '<td class="nc">'+item.n+'</td>'+
+        '<td class="dc">'+item.d+'</td>'+
+        '<td class="pc">£'+item.p+'</td>'+
+        '<td class="xc"><div class="tick" data-n="'+item.n+'" data-g="b"></div></td>'+
+        '<td class="xc"><div class="tick" data-n="'+item.n+'" data-g="w"></div></td>'+
+        '<td class="xc"><div class="tick" data-n="'+item.n+'" data-g="a"></div></td>'+
+        '<td class="rc" id="r'+item.n+'"></td>';
+    }
+    tbody.appendChild(tr);
   });
-  var msg = 'ORDER - ' + group + '\n\n';
-  order.forEach(function(sec) {
-    msg += sec + '\n';
-    sections[sec].forEach(function(line) { msg += '  ' + line + '\n'; });
-    msg += '\n';
-  });
-  return msg.trim();
+})();
+
+function renderTick(el,on){
+  el.textContent=on?'✓':'';
+  on?el.classList.add('on'):el.classList.remove('on');
 }
 
-document.querySelectorAll('.btn').forEach(function(btn) {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    var group = this.dataset.group;
-    var msg = buildMessage(group);
-    var warning = document.getElementById('warning');
-    if (!msg) {
-      warning.style.display = 'block';
-      setTimeout(function() { warning.style.display = 'none'; }, 3000);
-      return;
-    }
-    warning.style.display = 'none';
-    window.location.href = 'https://wa.me/447831124282?text=' + encodeURIComponent(msg);
+function renderAll(){
+  document.querySelectorAll('.tick').forEach(function(el){
+    var s=state[el.dataset.n]||{};
+    renderTick(el,!!s[el.dataset.g]);
+  });
+  recalc();
+}
+
+function recalc(){
+  var tb=0,tw=0,ta=0;
+  menu.forEach(function(item){
+    if(!item.n)return;
+    var s=state[item.n]||{};
+    var p=parseFloat(item.p);
+    var ct=(s.b?1:0)+(s.w?1:0)+(s.a?1:0);
+    var el=document.getElementById('r'+item.n);
+    if(el)el.textContent=ct?'£'+(p*ct).toFixed(2):'';
+    if(s.b)tb+=p;
+    if(s.w)tw+=p;
+    if(s.a)ta+=p;
+  });
+  var tt=tb+tw+ta;
+  var f=function(v){return'£'+v.toFixed(2);};
+  document.getElementById('tb').textContent=f(tb);
+  document.getElementById('tw').textContent=f(tw);
+  document.getElementById('ta').textContent=f(ta);
+  document.getElementById('tt').textContent=f(tt);
+  document.getElementById('fb').textContent=f(tb);
+  document.getElementById('fw').textContent=f(tw);
+  document.getElementById('fa').textContent=f(ta);
+  document.getElementById('ft').textContent=f(tt);
+}
+
+function applyPatch(path,data){
+  if(path==='/'){state=data||{};return;}
+  var parts=path.replace(/^\//,'').split('/');
+  if(parts.length===1){
+    if(data===null)delete state[parts[0]];
+    else state[parts[0]]=data||{};
+  } else if(parts.length===2){
+    if(!state[parts[0]])state[parts[0]]={};
+    if(data===null)delete state[parts[0]][parts[1]];
+    else state[parts[0]][parts[1]]=data;
+  }
+}
+
+document.addEventListener('click',function(e){
+  var el=e.target.closest('.tick');
+  if(!el)return;
+  var n=el.dataset.n,g=el.dataset.g;
+  var cur=(state[n]&&state[n][g])||false;
+  var val=!cur;
+  if(!state[n])state[n]={};
+  state[n][g]=val;
+  renderTick(el,val);
+  recalc();
+  fetch(DB+'/orders/'+encodeURIComponent(n)+'/'+g+'.json',{
+    method:'PUT',
+    body:JSON.stringify(val),
+    headers:{'Content-Type':'application/json'}
+  }).catch(function(){
+    state[n][g]=cur;
+    renderTick(el,cur);
+    recalc();
   });
 });
+
+var statusEl=document.getElementById('status');
+var es=new EventSource(DB+'/orders.json');
+es.addEventListener('put',function(e){
+  var p=JSON.parse(e.data);
+  applyPatch(p.path,p.data);
+  renderAll();
+});
+es.addEventListener('patch',function(e){
+  var p=JSON.parse(e.data);
+  var d=p.data||{};
+  Object.keys(d).forEach(function(k){applyPatch(p.path+'/'+k,d[k]);});
+  renderAll();
+});
+es.onopen=function(){statusEl.textContent='Live •';};
+es.onerror=function(){statusEl.textContent='Reconnecting…';};
 </script>
 </body>
 </html>
